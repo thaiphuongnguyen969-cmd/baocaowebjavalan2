@@ -1,0 +1,10 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" class="site-header">
+  <a class="brand" href="/">FASHION<span>SHOP</span></a>
+  <nav><a href="/">Trang chủ</a><a href="/products">Sản phẩm</a><a href="/blog">Bài viết</a><a href="/track">Tra cứu đơn</a></nav>
+  <div class="header-actions"><a href="/cart">Giỏ hàng</a><a th:if="${session.user==null}" href="/login">Đăng nhập</a><span th:if="${session.user!=null}" th:text="${session.user.fullname}"></span><a th:if="${session.user!=null && session.user.role=='admin'}" href="/admin">Quản trị</a><a th:if="${session.user!=null}" href="/logout">Thoát</a></div>
+</header>
+<footer th:fragment="footer" class="footer"><div><b>FASHIONSHOP</b><p>Thời trang hiện đại cho cuộc sống năng động.</p></div><div><b>Liên hệ</b><p>Hotline: 1900 6868</p><p>Email: hello@fashionshop.vn</p></div></footer>
+</body></html>

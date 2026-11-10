@@ -1,0 +1,7 @@
+<!doctype html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FashionShop</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header}"></div>
+<main><section class="hero"><div><p class="eyebrow">BỘ SƯU TẬP 2026</p><h1>Phong cách của<br>bạn mỗi ngày</h1><p>Thiết kế tối giản, chất liệu cao cấp, giá trị bền lâu.</p><a class="btn" href="/products">Khám phá ngay</a></div><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900" alt="Thời trang"></section>
+<section><div class="section-title"><div><p class="eyebrow">MUA SẮM</p><h2>Sản phẩm nổi bật</h2></div><a href="/products">Xem tất cả →</a></div>
+<div class="product-grid"><article class="product-card" th:each="p:${products}"><a th:href="@{/products/{id}(id=${p.id})}"><img th:src="${p.thumbnail}" alt=""><h3 th:text="${p.name}"></h3><p class="price" th:text="${#numbers.formatDecimal(p.sale_price != null ? p.sale_price : p.min_price,0,'POINT',0,'COMMA')} + ' đ'"></p></a></article></div></section>
+<section><div class="section-title"><div><p class="eyebrow">TIN TỨC</p><h2>Bài viết mới nhất</h2></div></div><div class="post-grid"><article th:each="post:${posts}"><img th:src="${post.thumbnail}" alt=""><p th:text="${post.category_name}"></p><h3><a th:href="@{/blog/{slug}(slug=${post.slug})}" th:text="${post.title}"></a></h3></article></div></section></main>
+<div th:replace="~{fragments :: footer}"></body></html>

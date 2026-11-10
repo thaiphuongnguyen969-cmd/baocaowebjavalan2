@@ -1,0 +1,178 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width">
+  <title th:text="${section}">Quản trị</title><link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside><a class="brand light" href="/">FASHION<span>SHOP</span></a>
+    <nav>
+      <a href="/admin">Tổng quan</a><a href="/admin/products">Sản phẩm</a><a href="/admin/variants">Biến thể</a>
+      <a href="/admin/categories">Danh mục</a><a href="/admin/users">Người dùng</a><a href="/admin/orders">Đơn hàng</a>
+      <a href="/admin/coupons">Mã giảm giá</a><a href="/admin/posts">Bài viết</a>
+      <a href="/admin/post-categories">Danh mục bài viết</a><a href="/admin/post-comments">Bình luận</a><a href="/admin/reviews">Đánh giá</a>
+    </nav>
+  </aside>
+  <main>
+    <h1 th:text="${section}"></h1>
+    <div th:if="${param.error}" class="admin-alert" th:text="${param.error}"></div>
+    <div th:if="${param.success}" class="admin-success" th:text="${param.success}"></div>
+
+    <form th:if="${section=='products'}" class="admin-form" method="post" action="/admin/products/create">
+      <input name="categoryId" type="number" placeholder="ID danh mục" required>
+      <input name="name" placeholder="Tên sản phẩm" required><input name="slug" placeholder="slug-san-pham" required>
+      <input name="thumbnail" placeholder="https://example.com/anh-san-pham.jpg" required>
+      <input name="images" placeholder='["https://example.com/anh1.jpg"]'>
+      <textarea name="description" placeholder="Mô tả sản phẩm"></textarea>
+      <select name="isActive"><option value="1">Đang bán</option><option value="0">Ngừng bán</option></select>
+      <input name="sku" placeholder="SKU mặc định (tự tạo nếu để trống)">
+      <input name="size" placeholder="Size mặc định, ví dụ M"><input name="color" placeholder="Màu mặc định">
+      <input name="price" type="number" min="0" step="0.01" placeholder="Giá bán (VND)" required>
+      <input name="salePrice" type="number" min="0" step="0.01" placeholder="Giá khuyến mãi (để trống nếu không có)">
+      <input name="stock" type="number" min="0" placeholder="Tồn kho" value="0" required>
+      <button class="btn">Thêm sản phẩm</button>
+    </form>
+
+    <form th:if="${section=='variants'}" class="admin-form" method="post" action="/admin/variants/create">
+      <input name="productId" type="number" placeholder="ID sản phẩm" required><input name="sku" placeholder="SKU" required>
+      <input name="size" placeholder="Size: S, M, L, XL" required><input name="color" placeholder="Màu sắc" required>
+      <input name="price" type="number" step="0.01" placeholder="Giá gốc" required><input name="salePrice" type="number" step="0.01" placeholder="Giá khuyến mãi">
+      <input name="stock" type="number" placeholder="Tồn kho" required><button class="btn">Thêm biến thể</button>
+    </form>
+
+    <form th:if="${section=='categories'}" class="admin-form" method="post" action="/admin/categories/create">
+      <input name="name" placeholder="Tên danh mục" required><input name="slug" placeholder="slug-danh-muc" required>
+      <input name="parentId" type="number" placeholder="ID danh mục cha (để trống nếu không có)">
+      <textarea name="description" placeholder="Mô tả"></textarea><button class="btn">Thêm danh mục</button>
+    </form>
+
+    <form th:if="${section=='users'}" class="admin-form" method="post" action="/admin/users/create">
+      <input name="fullname" placeholder="Họ tên" required><input name="email" type="text" placeholder="Email hoặc tài khoản" required>
+      <input name="password" type="password" placeholder="Mật khẩu" required><input name="phone" placeholder="Điện thoại">
+      <input name="address" placeholder="Địa chỉ"><select name="role"><option value="customer">Customer</option><option value="admin">Admin</option></select>
+      <select name="status"><option value="1">Hoạt động</option><option value="0">Khóa</option></select><button class="btn">Thêm người dùng</button>
+    </form>
+
+    <form th:if="${section=='coupons'}" class="admin-form" method="post" action="/admin/coupons/create">
+      <input name="code" placeholder="Mã giảm giá" required><select name="discountType"><option value="fixed">Giảm tiền</option><option value="percent">Giảm phần trăm</option></select>
+      <input name="discountValue" type="number" step="0.01" placeholder="Giá trị" required><input name="minOrderValue" type="number" step="0.01" placeholder="Đơn tối thiểu">
+      <input name="usageLimit" type="number" placeholder="Giới hạn lượt dùng"><input name="expiresAt" type="datetime-local" required><button class="btn">Thêm mã</button>
+    </form>
+
+    <form th:if="${section=='posts'}" class="admin-form" method="post" action="/admin/posts/create">
+      <input name="categoryId" type="number" placeholder="ID danh mục bài viết" required><input name="userId" type="number" placeholder="ID tác giả" required>
+      <input name="title" placeholder="Tiêu đề bài viết" required><input name="slug" placeholder="slug-bai-viet" required>
+      <input name="thumbnail" placeholder="https://example.com/anh-bai-viet.jpg"><textarea name="summary" placeholder="Tóm tắt"></textarea>
+      <textarea name="content" placeholder="Nội dung bài viết" required></textarea>
+      <select name="isPublished"><option value="1">Xuất bản</option><option value="0">Nháp</option></select><button class="btn">Thêm bài viết</button>
+    </form>
+
+    <form th:if="${section=='post-categories'}" class="admin-form" method="post" action="/admin/post-categories/create">
+      <input name="name" placeholder="Tên danh mục bài viết" required><input name="slug" placeholder="slug-danh-muc-bai-viet" required>
+      <textarea name="description" placeholder="Mô tả"></textarea><button class="btn">Thêm danh mục bài viết</button>
+    </form>
+
+    <form th:if="${section=='post-comments'}" class="admin-form" method="post" action="/admin/post-comments/create">
+      <input name="postId" type="number" placeholder="ID bài viết" required><input name="userId" type="number" placeholder="ID người dùng" required>
+      <input name="parentId" type="number" placeholder="ID bình luận cha (để trống nếu là bình luận gốc)">
+      <textarea name="content" placeholder="Nội dung bình luận" required></textarea>
+      <button class="btn">Thêm bình luận</button>
+    </form>
+
+    <form th:if="${section=='reviews'}" class="admin-form" method="post" action="/admin/reviews/create">
+      <input name="userId" type="number" placeholder="ID người dùng" required>
+      <input name="productId" type="number" placeholder="ID sản phẩm" required>
+      <select name="rating" required><option value="1">1 sao</option><option value="2">2 sao</option><option value="3">3 sao</option><option value="4">4 sao</option><option value="5">5 sao</option></select>
+      <textarea name="comment" placeholder="Nội dung đánh giá"></textarea>
+      <button class="btn">Thêm đánh giá</button>
+    </form>
+
+    <div class="table-wrap">
+      <table>
+        <thead th:if="${rows != null and !rows.isEmpty()}"><tr><th th:each="entry:${rows[0]}" th:text="${entry.key}"></th><th>Hình ảnh</th><th>Thao tác</th></tr></thead>
+        <tbody><tr th:each="row:${rows}">
+          <td th:each="entry:${row}" th:attr="data-key=${entry.key},data-value=${entry.value}">
+            <img th:if="${entry.key=='thumbnail' or entry.key=='image_url'}" th:src="${entry.value}" class="admin-thumb" alt="Hình">
+            <span th:if="${entry.key!='thumbnail' and entry.key!='image_url'}" th:text="${entry.value}"></span>
+          </td>
+          <td></td>
+          <td class="row-actions">
+            <button th:if="${section=='products' or section=='variants' or section=='categories' or section=='users' or section=='coupons' or section=='posts' or section=='reviews' or section=='post-categories' or section=='post-comments'}"
+                    type="button" class="btn-edit" th:attr="data-id=${row.id},data-section=${section}"
+                    onclick="editRow(this)">Sửa</button>
+            <button th:if="${section=='orders'}" type="button" class="btn-edit"
+                    th:attr="data-id=${row.id},data-section=${section}" onclick="editRow(this)">Cập nhật trạng thái</button>
+            <form th:action="@{/admin/{s}/delete/{id}(s=${section},id=${row.id})}" method="post" style="display:inline">
+              <button class="link-button" onclick="return confirm('Xóa bản ghi này?')">Xóa</button>
+            </form>
+          </td>
+        </tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<dialog id="editDialog" class="admin-dialog">
+  <form method="post" id="editForm">
+    <div class="dialog-head"><h2>Sửa dữ liệu</h2><button type="button" onclick="editDialog.close()" class="dialog-close">×</button></div>
+    <div id="editFields" class="admin-form edit-fields"></div>
+    <button class="btn" type="submit">Lưu thay đổi vào MySQL</button>
+  </form>
+</dialog>
+<script th:inline="none">
+function editRow(button){
+  const section=button.dataset.section, id=button.dataset.id, row=button.closest('tr');
+  const values={}; row.querySelectorAll('[data-key]').forEach(td=>values[td.dataset.key]=td.dataset.value||'');
+  const defs={
+    products:[
+      ['categoryId','category_id','ID danh mục','number'],['name','name','Tên sản phẩm','text'],['slug','slug','Slug','text'],
+      ['description','description','Mô tả','textarea'],['thumbnail','thumbnail','URL hình ảnh chính','url'],['images','images','JSON URL hình phụ','text'],['isActive','is_active','Trạng thái','select-status'],
+      ['sku','sku','SKU mặc định','text'],['size','size','Size mặc định','text'],['color','color','Màu mặc định','text'],
+      ['price','price','Giá gốc/Giá bán (VND)','number'],['salePrice','sale_price','Giá khuyến mãi (VND)','number'],['stock','stock','Tồn kho','number']
+    ],
+    variants:[
+      ['productId','product_id','ID sản phẩm','number'],['sku','sku','SKU','text'],['size','size','Size','text'],['color','color','Màu sắc','text'],
+      ['price','price','Giá gốc','number'],['salePrice','sale_price','Giá khuyến mãi','number'],['stock','stock','Tồn kho','number']
+    ],
+    categories:[['name','name','Tên danh mục','text'],['slug','slug','Slug','text'],['parentId','parent_id','ID danh mục cha','number'],['description','description','Mô tả','textarea']],
+    users:[['fullname','fullname','Họ tên','text'],['email','email','Email hoặc tài khoản','text'],['password','','Mật khẩu mới (để trống nếu không đổi)','password'],['phone','phone','Điện thoại','text'],['address','address','Địa chỉ','text'],['role','role','Vai trò','select-role'],['status','status','Trạng thái','select-status']],
+    coupons:[['code','code','Mã giảm giá','text'],['discountType','discount_type','Loại giảm giá','select-discount'],['discountValue','discount_value','Giá trị giảm','number'],['minOrderValue','min_order_value','Đơn tối thiểu','number'],['usageLimit','usage_limit','Giới hạn lượt dùng','number'],['expiresAt','expires_at','Ngày hết hạn','datetime-local']],
+    posts:[['categoryId','category_id','ID danh mục bài viết','number'],['userId','user_id','ID tác giả','number'],['title','title','Tiêu đề','text'],['slug','slug','Slug','text'],['thumbnail','thumbnail','URL hình ảnh','url'],['summary','summary','Tóm tắt','textarea'],['content','content','Nội dung','textarea'],['isPublished','is_published','Trạng thái','select-published']],
+    reviews:[['userId','user_id','ID người dùng','number'],['productId','product_id','ID sản phẩm','number'],['rating','rating','Số sao 1-5','number'],['comment','comment','Nội dung','textarea']],
+    'post-categories':[['name','name','Tên danh mục','text'],['slug','slug','Slug','text'],['description','description','Mô tả','textarea']],
+    'post-comments':[['postId','post_id','ID bài viết','number'],['userId','user_id','ID người dùng','number'],['parentId','parent_id','ID bình luận cha','number'],['content','content','Nội dung bình luận','textarea']],
+    orders:[['orderStatus','order_status','Trạng thái đơn hàng','select-order'],['paymentStatus','payment_status','Trạng thái thanh toán','select-payment']]
+  };
+  const fields=defs[section]||[];
+  const form=document.getElementById('editForm'), container=document.getElementById('editFields');
+  form.action='/admin/'+section+'/update/'+id; container.innerHTML='';
+  fields.forEach(([name,key,label,type])=>{
+    let control;
+    if(type==='textarea'){
+      control=document.createElement('textarea'); control.textContent=key?values[key]||'':'';
+    }else if(type.startsWith('select-')){
+      control=document.createElement('select');
+      const options=type==='select-status'?[['1','Hoạt động'],['0','Khóa'],['1','Đang bán'],['0','Ngừng bán']]
+        :type==='select-role'?[['customer','Customer'],['admin','Admin']]
+        :type==='select-discount'?[['fixed','Giảm tiền'],['percent','Giảm phần trăm']]
+        :type==='select-published'?[['1','Xuất bản'],['0','Nháp']]
+        :type==='select-order'?[['pending','pending'],['confirmed','confirmed'],['shipping','shipping'],['completed','completed'],['cancelled','cancelled']]
+        :[['pending','pending'],['paid','paid'],['refunded','refunded']];
+      options.forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;control.appendChild(option)});
+          const current=key?values[key]||'':'';
+          if(current!=='' && [...control.options].some(option=>option.value===current)) control.value=current;
+    }else{
+      control=document.createElement('input'); control.type=type==='url'?'url':type==='datetime-local'?'datetime-local':type;
+      let value=key?values[key]||'':'';
+      if(type==='datetime-local' && value){
+        value=value.replace(' ','T').slice(0,16);
+      }
+      control.value=value;
+    }
+    control.name=name; control.required=['name','fullname','email','password','title','slug','sku','size','color','price','stock','code','discountValue','rating','content'].includes(name) && name!=='password';
+    const wrap=document.createElement('label'); wrap.textContent=label+' '; wrap.appendChild(control); container.appendChild(wrap);
+  });
+  document.getElementById('editDialog').showModal();
+}
+</script>
+</body></html>

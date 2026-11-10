@@ -1,0 +1,161 @@
+{
+  "info": {
+    "name": "FashionShop Backend API",
+    "_postman_id": "fashion-shop-api-collection",
+    "description": "Collection test backend Spring Boot, JWT va MySQL XAMPP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:8080"},
+    {"key":"adminEmail","value":"admin@fashion.vn"},
+    {"key":"adminPassword","value":"password"},
+    {"key":"token","value":""},
+    {"key":"sessionId","value":"postman-test-session"},
+    {"key":"variantId","value":"1"},
+    {"key":"productId","value":"1"},
+    {"key":"productSlug","value":"ao-so-mi-premium-xanh"},
+    {"key":"userId","value":"2"},
+    {"key":"categoryId","value":"1"},
+    {"key":"postId","value":"1"},
+    {"key":"reviewId","value":"1"},
+    {"key":"reviewReplyId","value":"1"},
+    {"key":"reviewImageId","value":"1"},
+    {"key":"cartItemId","value":"1"},
+    {"key":"orderId","value":"1"},
+    {"key":"orderCode","value":"FS"},
+    {"key":"couponId","value":"1"}
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{"key":"token","value":"{{token}}","type":"string"}]
+  },
+  "item": [
+    {
+      "name":"01 Auth",
+      "item":[
+        {
+          "name":"Dang nhap admin",
+          "request":{
+            "method":"POST",
+            "header":[{"key":"Content-Type","value":"application/json"}],
+            "url":{"raw":"{{baseUrl}}/api/auth/login","host":["{{baseUrl}}"],"path":["api","auth","login"]},
+            "body":{"mode":"raw","raw":"{\n  \"email\":\"{{adminEmail}}\",\n  \"password\":\"{{adminPassword}}\"\n}","options":{"raw":{"language":"json"}}}
+          },
+          "event":[{"listen":"test","script":{"exec":[
+            "if(pm.response.code===200){",
+            "  const data=pm.response.json();",
+            "  pm.collectionVariables.set('token',data.token || '');",
+            "  pm.collectionVariables.set('userId',String(data.user?.id || ''));",
+            "  pm.collectionVariables.set('userRole',data.user?.role || '');",
+            "  pm.test('Dang nhap tra ve JWT co 3 phan', function(){",
+            "    pm.expect((data.token || '').split('.').length).to.eql(3);",
+            "  });",
+            "}"
+          ]}}]
+        },
+        {
+          "name":"Dang ky customer",
+          "request":{
+            "method":"POST",
+            "header":[{"key":"Content-Type","value":"application/json"}],
+            "url":{"raw":"{{baseUrl}}/api/auth/register","host":["{{baseUrl}}"],"path":["api","auth","register"]},
+            "body":{"mode":"raw","raw":"{\n  \"fullname\":\"Postman Customer\",\n  \"email\":\"postman.customer@test.vn\",\n  \"password\":\"123456\",\n  \"phone\":\"0909000999\",\n  \"address\":\"Ha Noi\"\n}","options":{"raw":{"language":"json"}}}
+          }
+        }
+      ]
+    },
+    {
+      "name":"02 Dashboard va Users",
+      "item":[
+        {"name":"Dashboard","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/dashboard","host":["{{baseUrl}}"],"path":["api","admin","dashboard"]}}},
+        {"name":"Danh sach users","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/users","host":["{{baseUrl}}"],"path":["api","admin","users"]}}},
+        {"name":"Them user","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/users","host":["{{baseUrl}}"],"path":["api","admin","users"]},"body":{"mode":"raw","raw":"{\n  \"fullname\":\"Nguoi dung Postman\",\n  \"email\":\"postman.user@test.vn\",\n  \"password\":\"123456\",\n  \"phone\":\"0909000001\",\n  \"address\":\"Da Nang\",\n  \"role\":\"customer\",\n  \"status\":1\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua user","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/users/{{userId}}","host":["{{baseUrl}}"],"path":["api","admin","users","{{userId}}"]},"body":{"mode":"raw","raw":"{\n  \"fullname\":\"Nguoi dung da sua\",\n  \"email\":\"postman.user@test.vn\",\n  \"phone\":\"0909000002\",\n  \"address\":\"Hai Phong\",\n  \"role\":\"customer\",\n  \"status\":1,\n  \"password\":\"\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa user","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/users/{{userId}}","host":["{{baseUrl}}"],"path":["api","admin","users","{{userId}}"]}}}
+      ]
+    },
+    {
+      "name":"03 Categories va Products",
+      "item":[
+        {"name":"Danh sach categories","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/categories","host":["{{baseUrl}}"],"path":["api","categories"]}}},
+        {"name":"Chi tiet category","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/categories/{{categoryId}}","host":["{{baseUrl}}"],"path":["api","admin","categories","{{categoryId}}"]}}},
+        {"name":"Them category","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/categories","host":["{{baseUrl}}"],"path":["api","admin","categories"]},"body":{"mode":"raw","raw":"{\n  \"name\":\"Danh muc Postman\",\n  \"slug\":\"danh-muc-postman\",\n  \"parentId\":null,\n  \"description\":\"Du lieu tao bang Postman\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua category","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/categories/{{categoryId}}","host":["{{baseUrl}}"],"path":["api","admin","categories","{{categoryId}}"]},"body":{"mode":"raw","raw":"{\n  \"name\":\"Danh muc da sua\",\n  \"slug\":\"danh-muc-postman\",\n  \"parentId\":null,\n  \"description\":\"Da cap nhat bang Postman\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa category","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/categories/{{categoryId}}","host":["{{baseUrl}}"],"path":["api","admin","categories","{{categoryId}}"]}}},
+        {"name":"Danh sach products public","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/products?page=1&size=12","host":["{{baseUrl}}"],"path":["api","products"],"query":[{"key":"page","value":"1"},{"key":"size","value":"12"}]}}},
+        {"name":"Chi tiet product","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/products/{{productId}}","host":["{{baseUrl}}"],"path":["api","products","{{productId}}"]}}},
+        {"name":"Danh sach products admin","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/products","host":["{{baseUrl}}"],"path":["api","admin","products"]}}},
+        {"name":"Them product","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/products","host":["{{baseUrl}}"],"path":["api","admin","products"]},"body":{"mode":"raw","raw":"{\n  \"categoryId\":1,\n  \"name\":\"San pham Postman\",\n  \"slug\":\"san-pham-postman\",\n  \"description\":\"San pham test CRUD\",\n  \"thumbnail\":\"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900\",\n  \"images\":\"[\\\"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900\\\"]\",\n  \"isActive\":1\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua product","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/products/{{productId}}","host":["{{baseUrl}}"],"path":["api","admin","products","{{productId}}"]},"body":{"mode":"raw","raw":"{\n  \"categoryId\":1,\n  \"name\":\"San pham da sua\",\n  \"slug\":\"san-pham-postman\",\n  \"description\":\"Da cap nhat bang Postman\",\n  \"thumbnail\":\"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900\",\n  \"images\":\"[\\\"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900\\\"]\",\n  \"isActive\":1\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa product","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/products/{{productId}}","host":["{{baseUrl}}"],"path":["api","admin","products","{{productId}}"]}}},
+        {"name":"Danh sach variants","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/variants","host":["{{baseUrl}}"],"path":["api","admin","variants"]}}},
+        {"name":"Them variant","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/variants","host":["{{baseUrl}}"],"path":["api","admin","variants"]},"body":{"mode":"raw","raw":"{\n  \"productId\":1,\n  \"sku\":\"POSTMAN-M-01\",\n  \"size\":\"M\",\n  \"color\":\"Den\",\n  \"price\":350000,\n  \"salePrice\":299000,\n  \"stock\":20\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua variant","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/variants/{{variantId}}","host":["{{baseUrl}}"],"path":["api","admin","variants","{{variantId}}"]},"body":{"mode":"raw","raw":"{\n  \"productId\":1,\n  \"sku\":\"POSTMAN-M-01\",\n  \"size\":\"L\",\n  \"color\":\"Den\",\n  \"price\":350000,\n  \"salePrice\":299000,\n  \"stock\":15\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa variant","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/variants/{{variantId}}","host":["{{baseUrl}}"],"path":["api","admin","variants","{{variantId}}"]}}}
+      ]
+    },
+    {
+      "name":"04 Cart Coupons Orders",
+      "item":[
+        {"name":"Danh sach coupon public","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/coupons","host":["{{baseUrl}}"],"path":["api","coupons"]}}},
+        {"name":"Danh sach coupon admin","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/coupons","host":["{{baseUrl}}"],"path":["api","admin","coupons"]}}},
+        {"name":"Them coupon","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/coupons","host":["{{baseUrl}}"],"path":["api","admin","coupons"]},"body":{"mode":"raw","raw":"{\n  \"code\":\"POSTMAN10\",\n  \"discountType\":\"percent\",\n  \"discountValue\":10,\n  \"minOrderValue\":100000,\n  \"usageLimit\":100,\n  \"expiresAt\":\"2027-12-31 23:59:59\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua coupon","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/coupons/{{couponId}}","host":["{{baseUrl}}"],"path":["api","admin","coupons","{{couponId}}"]},"body":{"mode":"raw","raw":"{\n  \"code\":\"POSTMAN15\",\n  \"discountType\":\"percent\",\n  \"discountValue\":15,\n  \"minOrderValue\":200000,\n  \"usageLimit\":100,\n  \"expiresAt\":\"2027-12-31 23:59:59\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa coupon","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/coupons/{{couponId}}","host":["{{baseUrl}}"],"path":["api","admin","coupons","{{couponId}}"]}}},
+        {"name":"Them vao gio","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/cart/items","host":["{{baseUrl}}"],"path":["api","cart","items"]},"body":{"mode":"raw","raw":"{\n  \"sessionId\":\"{{sessionId}}\",\n  \"variantId\":{{variantId}},\n  \"quantity\":2\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xem gio","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/cart/{{sessionId}}","host":["{{baseUrl}}"],"path":["api","cart","{{sessionId}}"]}}},
+        {"name":"Xoa khoi gio","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/cart/items/{{cartItemId}}?sessionId={{sessionId}}","host":["{{baseUrl}}"],"path":["api","cart","items","{{cartItemId}}"],"query":[{"key":"sessionId","value":"{{sessionId}}"}]}}},
+        {"name":"Checkout","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/orders/checkout","host":["{{baseUrl}}"],"path":["api","orders","checkout"]},"body":{"mode":"raw","raw":"{\n  \"userId\":null,\n  \"receiverName\":\"Postman Customer\",\n  \"receiverPhone\":\"0909000999\",\n  \"receiverAddress\":\"Ha Noi\",\n  \"paymentMethod\":\"COD\",\n  \"couponCode\":\"WELCOME10\",\n  \"note\":\"Test don Postman\",\n  \"items\":[{\"variantId\":{{variantId}},\"quantity\":1}]\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Danh sach orders","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/orders","host":["{{baseUrl}}"],"path":["api","admin","orders"]}}},
+        {"name":"Chi tiet order","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/orders/{{orderId}}","host":["{{baseUrl}}"],"path":["api","admin","orders","{{orderId}}"]}}},
+        {"name":"Cap nhat trang thai order","request":{"method":"PATCH","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/orders/{{orderId}}/status","host":["{{baseUrl}}"],"path":["api","admin","orders","{{orderId}}","status"]},"body":{"mode":"raw","raw":"{\n  \"orderStatus\":\"confirmed\",\n  \"paymentStatus\":\"paid\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa order","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/orders/{{orderId}}","host":["{{baseUrl}}"],"path":["api","admin","orders","{{orderId}}"]}}},
+        {"name":"Tra cuu order","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/orders/track/{{orderCode}}","host":["{{baseUrl}}"],"path":["api","orders","track","{{orderCode}}"]}}}
+      ]
+    },
+    {
+      "name":"05 Posts va Comments",
+      "item":[
+        {"name":"Danh sach post categories","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/post-categories","host":["{{baseUrl}}"],"path":["api","post-categories"]}}},
+        {"name":"Danh sach posts public","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/posts?page=1&size=10","host":["{{baseUrl}}"],"path":["api","posts"],"query":[{"key":"page","value":"1"},{"key":"size","value":"10"}]}}},
+        {"name":"Danh sach posts admin","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/posts","host":["{{baseUrl}}"],"path":["api","admin","posts"]}}},
+        {"name":"Them post category","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/post-categories","host":["{{baseUrl}}"],"path":["api","admin","post-categories"]},"body":{"mode":"raw","raw":"{\n  \"name\":\"Tin Postman\",\n  \"slug\":\"tin-postman\",\n  \"description\":\"Danh muc test\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Them post","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/posts","host":["{{baseUrl}}"],"path":["api","admin","posts"]},"body":{"mode":"raw","raw":"{\n  \"categoryId\":1,\n  \"userId\":1,\n  \"title\":\"Bai viet Postman\",\n  \"slug\":\"bai-viet-postman\",\n  \"thumbnail\":\"https://images.unsplash.com/photo-1445205170230-053b83016050?w=900\",\n  \"summary\":\"Tom tat bai viet\",\n  \"content\":\"Noi dung chi tiet bai viet test bang Postman.\",\n  \"isPublished\":1\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Them comment","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/posts/{{postId}}/comments","host":["{{baseUrl}}"],"path":["api","posts","{{postId}}","comments"]},"body":{"mode":"raw","raw":"{\n  \"userId\":{{userId}},\n  \"parentId\":null,\n  \"content\":\"Binh luan test bang Postman\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Danh sach comments admin","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/post-comments","host":["{{baseUrl}}"],"path":["api","admin","post-comments"]}}}
+      ]
+    },
+    {
+      "name":"06 Reviews",
+      "item":[
+        {"name":"Danh sach review public","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/reviews/{{productId}}","host":["{{baseUrl}}"],"path":["api","reviews","{{productId}}"]}}},
+        {"name":"Danh sach review admin","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/reviews","host":["{{baseUrl}}"],"path":["api","admin","reviews"]}}},
+        {"name":"Them review","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/reviews","host":["{{baseUrl}}"],"path":["api","admin","reviews"]},"body":{"mode":"raw","raw":"{\n  \"userId\":2,\n  \"productId\":1,\n  \"rating\":5,\n  \"comment\":\"Danh gia test bang Postman\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua review","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/reviews/{{reviewId}}","host":["{{baseUrl}}"],"path":["api","admin","reviews","{{reviewId}}"]},"body":{"mode":"raw","raw":"{\n  \"userId\":2,\n  \"productId\":1,\n  \"rating\":4,\n  \"comment\":\"Danh gia da sua bang Postman\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Tra loi review","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/reviews/{{reviewId}}/reply","host":["{{baseUrl}}"],"path":["api","admin","reviews","{{reviewId}}","reply"]},"body":{"mode":"raw","raw":"{\n  \"userId\":1,\n  \"comment\":\"Cam on ban da danh gia\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Danh sach phan hoi review","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/review-replies","host":["{{baseUrl}}"],"path":["api","admin","review-replies"]}}},
+        {"name":"Chi tiet phan hoi review","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/admin/review-replies/{{reviewReplyId}}","host":["{{baseUrl}}"],"path":["api","admin","review-replies","{{reviewReplyId}}"]}}},
+        {"name":"Sua phan hoi review","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/review-replies/{{reviewReplyId}}","host":["{{baseUrl}}"],"path":["api","admin","review-replies","{{reviewReplyId}}"]},"body":{"mode":"raw","raw":"{\n  \"comment\":\"Da cap nhat phan hoi\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa phan hoi review","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/review-replies/{{reviewReplyId}}","host":["{{baseUrl}}"],"path":["api","admin","review-replies","{{reviewReplyId}}"]}}},
+        {"name":"Xoa review","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/reviews/{{reviewId}}","host":["{{baseUrl}}"],"path":["api","admin","reviews","{{reviewId}}"]}}}
+      ]
+    },
+    {
+      "name":"07 Profile va endpoints bo sung",
+      "item":[
+        {"name":"Danh muc con","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/categories/{{categoryId}}/children","host":["{{baseUrl}}"],"path":["api","categories","{{categoryId}}","children"]}}},
+        {"name":"Tim loc san pham theo gia","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/products?search=ao&categoryId={{categoryId}}&minPrice=100000&maxPrice=500000&page=1&size=12","host":["{{baseUrl}}"],"path":["api","products"],"query":[{"key":"search","value":"ao"},{"key":"categoryId","value":"{{categoryId}}"},{"key":"minPrice","value":"100000"},{"key":"maxPrice","value":"500000"},{"key":"page","value":"1"},{"key":"size","value":"12"}]}}},
+        {"name":"Chi tiet san pham theo slug","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/products/slug/{{productSlug}}","host":["{{baseUrl}}"],"path":["api","products","slug","{{productSlug}}"]}}},
+        {"name":"Cap nhat so luong gio hang","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/cart/items/{{cartItemId}}","host":["{{baseUrl}}"],"path":["api","cart","items","{{cartItemId}}"]},"body":{"mode":"raw","raw":"{\n  \"sessionId\":\"{{sessionId}}\",\n  \"quantity\":1\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Lich su don hang cua toi","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/orders/my","host":["{{baseUrl}}"],"path":["api","orders","my"]}}},
+        {"name":"Xem ho so cua toi","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/users/me","host":["{{baseUrl}}"],"path":["api","users","me"]}}},
+        {"name":"Cap nhat ho so cua toi","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/users/me","host":["{{baseUrl}}"],"path":["api","users","me"]},"body":{"mode":"raw","raw":"{\n  \"fullname\":\"Postman Customer\",\n  \"email\":\"postman.customer@test.vn\",\n  \"phone\":\"0909000999\",\n  \"address\":\"Ha Noi\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Doi mat khau","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/users/me/password","host":["{{baseUrl}}"],"path":["api","users","me","password"]},"body":{"mode":"raw","raw":"{\n  \"currentPassword\":\"password\",\n  \"newPassword\":\"newpassword123\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Danh sach anh review","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/reviews/{{reviewId}}/images","host":["{{baseUrl}}"],"path":["api","reviews","{{reviewId}}","images"]}}},
+        {"name":"Them anh review","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/reviews/{{reviewId}}/images","host":["{{baseUrl}}"],"path":["api","admin","reviews","{{reviewId}}","images"]},"body":{"mode":"raw","raw":"{\n  \"imageUrl\":\"https://example.com/review-image.jpg\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Sua anh review","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{baseUrl}}/api/admin/review-images/{{reviewImageId}}","host":["{{baseUrl}}"],"path":["api","admin","review-images","{{reviewImageId}}"]},"body":{"mode":"raw","raw":"{\n  \"imageUrl\":\"https://example.com/review-image-updated.jpg\"\n}","options":{"raw":{"language":"json"}}}}},
+        {"name":"Xoa anh review","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/admin/review-images/{{reviewImageId}}","host":["{{baseUrl}}"],"path":["api","admin","review-images","{{reviewImageId}}"]}}}
+      ]
+    }
+  ]
+}
